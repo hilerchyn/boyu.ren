@@ -1,20 +1,16 @@
 package framework
 
-
 type BoYu struct {
 	Banner string
 }
 
-
-func NewAapp() *BoYu{
+func NewAapp() *BoYu {
 	app := new(BoYu)
 	app.Banner = banner()
 
-
-	return  app
+	return app
 }
 
-
-func (by *BoYu) Start(){
+func (by *BoYu) Start() {
 	println(by.Banner)
 }

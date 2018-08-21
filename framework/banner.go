@@ -1,9 +1,6 @@
 package framework
 
-
-
-
-func banner() string{
+func banner() string {
 
 	return `
 _|                                      
