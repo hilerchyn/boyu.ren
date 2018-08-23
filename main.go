@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/hilerchyn/boyu.ren/app"
 	"github.com/microcosm-cc/bluemonday"
 	"gopkg.in/russross/blackfriday.v2"
-	"github.com/hilerchyn/boyu.ren/framework"
 )
 
 func main() {
@@ -14,8 +14,7 @@ func main() {
 
 	fmt.Println(string(html))
 
-	app := framework.NewAapp()
+	app := app.NewAapp()
 	app.Start()
-
 
 }

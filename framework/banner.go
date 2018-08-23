@@ -1,6 +1,6 @@
 package framework
 
-func banner() string {
+func Banner() string {
 
 	return `
 _|                                      
