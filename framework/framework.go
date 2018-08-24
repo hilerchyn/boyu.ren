@@ -2,7 +2,9 @@ package framework
 
 func NewApp() *Application {
 
-	app := &Application{}
+	app := &Application{
+		Router: newRouter(),
+	}
 
 	return app
 
