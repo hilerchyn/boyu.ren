@@ -2,11 +2,13 @@ package framework
 
 import (
 	"github.com/containous/traefik/log"
+	"github.com/hilerchyn/boyu.ren/framework/memstore"
 	"net/http"
 )
 
 type Application struct {
 	Router *Router
+	Store  *memstore.Store
 }
 
 func (a *Application) Run() {

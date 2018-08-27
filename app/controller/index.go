@@ -1,10 +1,8 @@
 package controller
 
 import (
-	"fmt"
-	"io/ioutil"
+	"github.com/hilerchyn/boyu.ren/framework/middleware"
 	"net/http"
-	"os"
 )
 
 type Index struct {
@@ -12,18 +10,23 @@ type Index struct {
 }
 
 func (c *Index) GetContent() (result []byte, err error) {
-	file, err := os.OpenFile("./markdown/index.md", os.O_RDONLY, os.ModePerm)
-	if err != nil {
-		return
-	}
-	defer file.Close()
-
-	result, err = ioutil.ReadAll(file)
-
-	fmt.Println(string(result))
-
+	result, err = c.GetFileContent("./markdown/index.md")
 	return
+}
 
+func (c *Index) Action(m middleware.MiddlewareArr) http.Handler {
+
+	if len(m) > 0 {
+
+		for i := 0; i < len(m); i++ {
+			function := m[i]
+
+			function()
+		}
+
+	}
+
+	return c
 }
 
 func (c *Index) ServeHTTP(w http.ResponseWriter, r *http.Request) {
