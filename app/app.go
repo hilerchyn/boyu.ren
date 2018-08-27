@@ -19,9 +19,10 @@ func NewAapp() *BoYu {
 
 func (by *BoYu) Start() {
 
+	println(by.Banner)
+
 	// register route
 	by.RegisterRoute()
 	by.App.Run()
 
-	println(by.Banner)
 }
