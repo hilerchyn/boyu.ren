@@ -2,11 +2,13 @@ package app
 
 import (
 	"github.com/hilerchyn/boyu.ren/framework"
+	"html/template"
 )
 
 type BoYu struct {
-	Banner string
-	App    *framework.Application
+	Banner   string
+	App      *framework.Application
+	Template *template.Template
 }
 
 func NewAapp() *BoYu {
