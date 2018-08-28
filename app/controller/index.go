@@ -2,8 +2,9 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"github.com/hilerchyn/boyu.ren/framework"
+	"github.com/hilerchyn/boyu.ren/framework/router"
+	"net/http"
 	"strings"
 )
 
@@ -12,11 +13,6 @@ type Index struct {
 }
 
 func (c *Index) GetContent(app *framework.Application, path string) (result []byte, err error) {
-
-	if !strings.HasSuffix(path, ".md") {
-		path = "/index.md"
-	}
-	path = "./markdown" + path
 
 	content := app.Store.Get(path)
 
@@ -37,11 +33,25 @@ func (c *Index) Action(ctx context.Context) {
 
 	cd := ctx.Value("data").(framework.ContextData)
 
-	fmt.Println(cd.Request.URL.Path)
+	path := cd.Request.URL.Path
+	if function, ok := GPathMap[path]; ok {
+		function.(router.RouteInterface).Action(ctx)
+		return
+	}
 
-	data, err := c.GetContent(cd.Application, cd.Request.URL.Path)
+	if path == "/" || path == "" {
+		path = "/index.md"
+	}
+	if !strings.HasSuffix(path, ".md") {
+		http.NotFound(cd.Writer, cd.Request)
+		return
+	}
+	path = "./markdown" + path
+
+	data, err := c.GetContent(cd.Application, path)
 	if err != nil {
-		c.ResponseErr(cd.Writer, err)
+		http.NotFound(cd.Writer, cd.Request)
+		//c.ResponseErr(cd.Writer, err)
 	}
 
 	c.ResponseMarkdown(cd.Writer, data)
