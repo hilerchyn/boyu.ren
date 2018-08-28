@@ -13,7 +13,7 @@ type Application struct {
 
 func (a *Application) Run() {
 
-	a.Router.Exec()
+	a.Router.Exec(a)
 
 	err := http.ListenAndServe(":8443", nil) //http.ListenAndServeTLS(":8443", )
 	log.Fatal(err)

@@ -1,41 +1,49 @@
 package controller
 
 import (
-	"github.com/hilerchyn/boyu.ren/framework/middleware"
-	"net/http"
+	"context"
+	"fmt"
+	"github.com/hilerchyn/boyu.ren/framework"
+	"strings"
 )
 
 type Index struct {
 	base
 }
 
-func (c *Index) GetContent() (result []byte, err error) {
-	result, err = c.GetFileContent("./markdown/index.md")
+func (c *Index) GetContent(app *framework.Application, path string) (result []byte, err error) {
+
+	if !strings.HasSuffix(path, ".md") {
+		path = "/index.md"
+	}
+	path = "./markdown" + path
+
+	content := app.Store.Get(path)
+
+	if content != nil {
+		result = content.([]byte)
+		return
+	}
+
+	result, err = c.GetFileContent(path)
+	if err == nil {
+		app.Store.Set(path, result)
+	}
+
 	return
 }
 
-func (c *Index) Action(m middleware.MiddlewareArr) http.Handler {
+func (c *Index) Action(ctx context.Context) {
 
-	if len(m) > 0 {
+	cd := ctx.Value("data").(framework.ContextData)
 
-		for i := 0; i < len(m); i++ {
-			function := m[i]
+	fmt.Println(cd.Request.URL.Path)
 
-			function()
-		}
-
-	}
-
-	return c
-}
-
-func (c *Index) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
-	data, err := c.GetContent()
+	data, err := c.GetContent(cd.Application, cd.Request.URL.Path)
 	if err != nil {
-		c.ResponseErr(w, err)
+		c.ResponseErr(cd.Writer, err)
 	}
 
-	c.ResponseMarkdown(w, data)
+	c.ResponseMarkdown(cd.Writer, data)
 
 }

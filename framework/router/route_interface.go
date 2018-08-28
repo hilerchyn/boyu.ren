@@ -1,10 +1,9 @@
 package router
 
 import (
-	"github.com/hilerchyn/boyu.ren/framework/middleware"
-	"net/http"
+	"context"
 )
 
 type RouteInterface interface {
-	Action(middleware.MiddlewareArr) http.Handler
+	Action(context.Context)
 }

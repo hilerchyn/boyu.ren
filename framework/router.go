@@ -1,38 +1,42 @@
 package framework
 
 import (
-	"github.com/containous/traefik/log"
-	"github.com/hilerchyn/boyu.ren/framework/memstore"
+	"context"
 	"github.com/hilerchyn/boyu.ren/framework/router"
 	"net/http"
 )
 
 type Router struct {
-	routes []*router.Route
-	store  []*memstore.Store
+	routes map[string]*router.Route
 }
 
 func (r *Router) Register(route *router.Route) {
 
-	if _, ok := route.Handler.(http.Handler); !ok {
-		log.Fatal("incorrect handler")
-	}
-
-	r.routes = append(r.routes, route)
+	r.routes[route.Path] = route
 }
 
-func (r *Router) Exec() {
+func (r *Router) Exec(app *Application) {
 	for _, v := range r.routes {
 
-		// use middleware
-		println("use middleware")
+		function := func(w http.ResponseWriter, req *http.Request) {
+			data := ContextData{
+				Writer:      w,
+				Request:     req,
+				Route:       *v,
+				Application: app,
+			}
 
-		http.Handle(v.Path, v.Handler.Action(v.Middleware))
+			ctx := context.WithValue(context.Background(), "data", data)
+			v.Handler.Action(ctx)
+		}
+
+		http.HandleFunc(v.Path, function)
 	}
+
 }
 
 func newRouter() *Router {
 	return &Router{
-		routes: []*router.Route{},
+		routes: map[string]*router.Route{},
 	}
 }
