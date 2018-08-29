@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/hilerchyn/boyu.ren/framework"
 	"html/template"
+	"net/http"
 )
 
 type BoYu struct {
@@ -25,6 +26,10 @@ func (by *BoYu) Start() {
 
 	// register route
 	by.RegisterRoute()
+
+	// handle static files
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
 	by.App.Run()
 
 }
