@@ -23,6 +23,13 @@ func (b *base) ResponseMarkdown(w http.ResponseWriter, data []byte) {
 	w.Write(html)
 }
 
+func (b *base) ParseToMarkdown(data []byte) []byte {
+	unsafe := blackfriday.Run(data)
+	html := bluemonday.UGCPolicy().SanitizeBytes(unsafe)
+
+	return html
+}
+
 func (b *base) GetFileContent(path string) (result []byte, err error) {
 
 	file, err := os.OpenFile(path, os.O_RDONLY, os.ModePerm)

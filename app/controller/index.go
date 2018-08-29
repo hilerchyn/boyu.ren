@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/hilerchyn/boyu.ren/framework"
 	"github.com/hilerchyn/boyu.ren/framework/router"
+	"html/template"
 	"net/http"
 	"strings"
 )
@@ -48,12 +49,19 @@ func (c *Index) Action(ctx context.Context) {
 	}
 	path = "./markdown" + path
 
-	data, err := c.GetContent(cd.Application, path)
+	content, err := c.GetContent(cd.Application, path)
 	if err != nil {
 		http.NotFound(cd.Writer, cd.Request)
 		//c.ResponseErr(cd.Writer, err)
+		return
 	}
 
-	c.ResponseMarkdown(cd.Writer, data)
+	navContent, _ := c.GetContent(cd.Application, "./markdown/nav.md")
+
+	cd.Writer.Header().Set("content-type", "text/html; charset=utf-8")
+	templ.ExecuteTemplate(cd.Writer, "layout.tmpl", struct {
+		Content    template.HTML
+		NavContent template.HTML
+	}{template.HTML(c.ParseToMarkdown(content)), template.HTML(c.ParseToMarkdown(navContent))})
 
 }
